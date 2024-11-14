@@ -1,15 +1,19 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { $Enums } from "@prisma/client";
 @ObjectType()
 export class User {
     @Field()
     id: string
 
     @Field(() => String, { nullable: null })
-    name: string
+    name?: string
 
     @Field(() => String, { nullable: true })
-    email: String
+    email?: String
 
     @Field(() => String, { nullable: true })
-    image: String
+    image?: String
+
+    @Field(() => String, { nullable: true })
+    role?: $Enums.ERole
 }

@@ -12,6 +12,7 @@ type Channel {
   name: String
   type: String
   updatedAt: DateTime
+  userChannel: [UserChannel!]
 }
 
 input CreateChannelDto {
@@ -28,10 +29,26 @@ scalar DateTime
 
 type Mutation {
   createChannel(createChannelDto: CreateChannelDto!): Channel
+  signUp(signUp: SignUpDto!): User
+  signUpByGoogle(signUpByGoogleDto: SignUpByGoogleDto!): User
 }
 
 type Query {
   hello: String!
+}
+
+input SignUpByGoogleDto {
+  email: String!
+  image: String
+  name: String!
+  password: String
+}
+
+input SignUpDto {
+  email: String!
+  image: String
+  name: String!
+  password: String
 }
 
 type User {
@@ -39,4 +56,13 @@ type User {
   id: String!
   image: String
   name: String!
+  role: String
+}
+
+type UserChannel {
+  channel: Channel
+  channelId: String
+  id: String!
+  participant: User
+  participantId: String
 }

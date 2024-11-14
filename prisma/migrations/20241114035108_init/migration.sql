@@ -1,14 +1,14 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "ELevel" AS ENUM ('FOUNDATION', 'ADVANCED', 'INTERMEDIATE');
 
-  - Added the required column `hostId` to the `Channel` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `Channel` table without a default value. This is not possible if the table is not empty.
+-- CreateEnum
+CREATE TYPE "EChannel" AS ENUM ('ONLY_ME', 'SOLO_LEARN', 'ALL_ARE_WELCOME');
 
-*/
--- AlterTable
-ALTER TABLE "Channel" ADD COLUMN     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "hostId" TEXT NOT NULL,
-ADD COLUMN     "updated_at" TIMESTAMP(3) NOT NULL;
+-- CreateEnum
+CREATE TYPE "ERole" AS ENUM ('USER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "ELanguage" AS ENUM ('ENGLISH', 'VIETNAMESE', 'CHINESE', 'SPANISH', 'FRENCH', 'GERMAN', 'JAPANESE', 'KOREAN', 'RUSSIAN', 'ITALIAN', 'PORTUGUESE', 'ARABIC', 'THAI', 'MALAY', 'HINDI', 'BENGALI', 'URDU', 'PERSIAN', 'TURKISH', 'POLISH');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -17,6 +17,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "role" "ERole" NOT NULL DEFAULT 'USER',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -32,11 +33,31 @@ CREATE TABLE "UserChannel" (
     CONSTRAINT "UserChannel_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Channel" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "level" "ELevel" NOT NULL,
+    "type" "EChannel" NOT NULL,
+    "language" "ELanguage" NOT NULL,
+    "hostId" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Channel_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "User_name_idx" ON "User"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Channel_name_key" ON "Channel"("name");
+
+-- CreateIndex
+CREATE INDEX "Channel_name_idx" ON "Channel"("name");
 
 -- AddForeignKey
 ALTER TABLE "UserChannel" ADD CONSTRAINT "UserChannel_participantId_fkey" FOREIGN KEY ("participantId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

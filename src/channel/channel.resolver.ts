@@ -13,8 +13,8 @@ export class ChannelResolver {
     @Mutation(() => Channel, { nullable: true })
     async createChannel(
         @Args('createChannelDto') createChannelDto: CreateChannelDto,
-        @Context() { request, response }: { request: Request, response: Response }
-    ) {
-        return this.channelService.createChannel(createChannelDto, request, response)
+        @Context() context: { req: Request, res: Response }
+    ): Promise<Channel> {
+        return await this.channelService.createChannel(createChannelDto, context.req)
     }
 }

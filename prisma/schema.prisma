@@ -59,11 +59,11 @@ model User {
   email       String        @unique
   image       String
   password    String
-  role        ERole
+  role        ERole         @default(USER)
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
   channels    Channel[]
-  UserChannel UserChannel[]
+  userChannel UserChannel[]
 
   @@index([name])
 }
@@ -86,7 +86,7 @@ model Channel {
   host        User          @relation(fields: [hostId], references: [id], onDelete: Cascade)
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
-  UserChannel UserChannel[]
+  userChannel UserChannel[]
 
   @@index([name])
 }

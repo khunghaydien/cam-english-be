@@ -9,28 +9,31 @@ export class Channel {
     id: string
 
     @Field(() => String, { nullable: true })
-    name: string
+    name?: string
 
     @Field(() => String, { nullable: true })
-    level: $Enums.ELevel
+    level?: $Enums.ELevel
 
     @Field(() => String, { nullable: true })
-    language: $Enums.ELanguage
+    language?: $Enums.ELanguage
 
     @Field(() => String, { nullable: true })
-    type: $Enums.EChannel
+    type?: $Enums.EChannel
 
     @Field(() => String, { nullable: true })
-    hostId: string
+    hostId?: string
 
     @Field(() => User, { nullable: true })
     host?: User;
 
-    @Field({ nullable: true })
-    createdAt: Date;
+    @Field(() => [UserChannel], { nullable: true })
+    userChannel?: UserChannel[]
 
     @Field({ nullable: true })
-    updatedAt: Date;
+    createdAt?: Date;
+
+    @Field({ nullable: true })
+    updatedAt?: Date;
 }
 
 @ObjectType()
@@ -39,14 +42,14 @@ export class UserChannel {
     id: string
 
     @Field(() => String, { nullable: true })
-    participantId: string;
+    participantId?: string;
 
     @Field(() => User, { nullable: true })
-    participant: User;
+    participant?: User;
 
     @Field(() => String, { nullable: true })
-    channelId: string;
+    channelId?: string;
 
     @Field(() => Channel, { nullable: true })
-    channel: Channel;
+    channel?: Channel;
 }

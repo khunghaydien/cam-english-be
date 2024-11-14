@@ -1,52 +1,57 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDto, SignUpByGoogleDto } from './user.dto';
+import { CreateUserDto, SignUpByGoogleDto, SignUpDto } from './user.dto';
 import { User } from './user.response';
-
+import * as bcrypt from 'bcrypt'
+import { randomUUID } from 'crypto';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UserService {
     constructor(
-        private readonly prismaService: PrismaService
+        private readonly prismaService: PrismaService,
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService
     ) { }
 
-    async existedEmail(email: string): Promise<User> {
-        try {
-            return this.prismaService.user.findUnique({
-                where: {
-                    email
-                }
-            })
-        } catch (error) {
-            throw new BadRequestException({ existedEmail: 'An error occurred while checking existed email.' })
-        }
+    async verifyUser(req: Request): Promise<User | null> {
+        const sessionToken = req.cookies['next-auth.session-token'] as string;
+        const payload = await this.jwtService.verify(sessionToken, {
+            secret: this.configService.get<string>('NEXTAUTH_SECRET'),
+        });
+        return await this.findUserByEmail(payload.email)
     }
 
-    async createUser({ name, email, image, password }: CreateUserDto): Promise<User> {
+    async hashPassword(password?: string): Promise<string> {
+        return await bcrypt.hash(password ?? randomUUID(), 10);
+    }
+
+    async findUserByEmail(email: string): Promise<User | null> {
+        return await this.prismaService.user.findUnique({ where: { email } });
+    }
+
+    async createUser(data: CreateUserDto): Promise<User> {
+        const { name, email, image, password } = data;
+        const hashedPassword = await this.hashPassword(password);
         try {
             return await this.prismaService.user.create({
-                data: {
-                    name,
-                    email,
-                    password,
-                    image
-                }
-            })
-        } catch (error) {
-            throw new BadRequestException({ createUser: 'An error occurred while creating user.' })
+                data: { name, email, password: hashedPassword, image },
+            });
+        } catch {
+            throw new BadRequestException({ user: 'An error occurred while creating user.' });
         }
     }
 
-    async signUpByGoogle(signUpByGoogleDto: SignUpByGoogleDto): Promise<User> {
-        const existedUser = await this.existedEmail(signUpByGoogleDto.email)
-        if (!existedUser) return await this.createUser(signUpByGoogleDto)
-        return existedUser
+    async signUpByGoogle(data: SignUpByGoogleDto): Promise<User> {
+        const user = await this.findUserByEmail(data.email);
+        return user ?? await this.createUser(data);
     }
 
-    async signUp(signUpDto: SignUpDto): Promise<User> {
-        const existedUser = await this.existedEmail(signUpDto.email)
-        if (existedUser) {
-            throw new BadRequestException({ signUp: 'Email existed' })
-        } return await this.createUser(signUpDto)
-        return existedUser
+    async signUp(data: SignUpDto): Promise<User> {
+        if (await this.findUserByEmail(data.email)) {
+            throw new BadRequestException({ email: 'Email already exists.' });
+        }
+        return await this.createUser(data);
     }
 }

@@ -1,5 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql"
+import { Field, InputType, ObjectType } from "@nestjs/graphql"
 import { $Enums } from "@prisma/client"
+import { Pagination } from "src/app.response"
 import { User } from "src/user/user.response"
 
 
@@ -52,4 +53,13 @@ export class UserChannel {
 
     @Field(() => Channel, { nullable: true })
     channel?: Channel;
+}
+
+@ObjectType()
+export class Channels {
+    @Field(() => [Channel])
+    data: Channel[];
+
+    @Field(() => Pagination)
+    pagination: Pagination;
 }

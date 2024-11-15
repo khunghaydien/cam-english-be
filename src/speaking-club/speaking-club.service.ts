@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateChannelDto, FilterChannelDto } from './channel.dto';
-import { Channel, Channels } from './channel.response';
+import { CreateChannelDto, FilterSpeakingClubDto, GetChannelDto } from '../speaking-club/speaking-club.dto';
+import { Channel, SpeakingClub } from '../speaking-club/speaking-club.response';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { OrderByDto, PaginationDto } from 'src/app.dto';
 import { Prisma } from '@prisma/client';
-import { channel } from 'diagnostics_channel';
+
 @Injectable()
-export class ChannelService {
+export class SpeakingClubService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly userService: UserService
@@ -38,10 +38,25 @@ export class ChannelService {
         }
     }
 
-    async getChannel(
-        { name, type, level, language }: FilterChannelDto,
+    async getChannel({ id }: GetChannelDto): Promise<Channel> {
+        try {
+            return await this.prismaService.channel.findUnique({
+                where: {
+                    id
+                },
+                include: {
+                    host: true
+                }
+            })
+        } catch (error) {
+            throw new BadRequestException({ channel: 'An error occurred while getting channel.' })
+        }
+    }
+
+    async getSpeakingClub(
+        { name, type, level, language }: FilterSpeakingClubDto,
         { page, pageSize }: PaginationDto,
-        { field, order }: OrderByDto): Promise<Channels> {
+        { field, order }: OrderByDto): Promise<SpeakingClub> {
         const where: Prisma.ChannelWhereInput = {
             ...(name && { name: { contains: name, mode: 'insensitive' } }),
             ...(type && { type }),
@@ -54,7 +69,7 @@ export class ChannelService {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
         try {
-            const [totalElements, channel] = await Promise.all([
+            const [totalElements, speakingClub] = await Promise.all([
                 this.prismaService.channel.count({ where }),
                 this.prismaService.channel.findMany({
                     where,
@@ -65,7 +80,7 @@ export class ChannelService {
             ]);
 
             return {
-                data: channel,
+                data: speakingClub,
                 pagination: {
                     currentPage: page,
                     pageSize: pageSize,
@@ -74,7 +89,7 @@ export class ChannelService {
                 },
             };
         } catch (error) {
-            throw new BadRequestException({ channel: 'An error occurred while getting channels.' })
+            throw new BadRequestException({ channel: 'An error occurred while getting speaking club.' })
         }
     }
 }

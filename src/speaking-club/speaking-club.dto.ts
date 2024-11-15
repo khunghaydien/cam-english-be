@@ -28,7 +28,7 @@ export class CreateChannelDto {
 
 
 @InputType()
-export class FilterChannelDto {
+export class FilterSpeakingClubDto {
     @Field(() => String, { nullable: true })
     @IsOptional()
     @IsString({ message: 'Name must be string' })
@@ -50,4 +50,12 @@ export class FilterChannelDto {
     @IsOptional()
     @IsString({ message: 'Type must be string' })
     type: EChannel
+}
+
+@InputType()
+export class GetChannelDto {
+    @Field(() => String)
+    @IsNotEmpty({ message: "Id is required" })
+    @IsString({ message: 'Id must be string' })
+    id: string
 }

@@ -1,12 +1,12 @@
 import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChannelModule } from './channel/channel.module';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { AppResolver } from './app.resolver';
+import { SpeakingClubModule } from './speaking-club/speaking-club.module';
 @Global()
 @Module({
   imports: [
@@ -21,8 +21,8 @@ import { AppResolver } from './app.resolver';
       },
       context: ({ req, res }) => ({ req, res })
     }),
-    ChannelModule,
     UserModule,
+    SpeakingClubModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

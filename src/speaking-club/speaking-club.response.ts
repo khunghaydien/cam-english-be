@@ -56,7 +56,7 @@ export class UserChannel {
 }
 
 @ObjectType()
-export class Channels {
+export class SpeakingClub {
     @Field(() => [Channel])
     data: Channel[];
 

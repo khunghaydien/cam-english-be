@@ -15,11 +15,6 @@ type Channel {
   userChannel: [UserChannel!]
 }
 
-type Channels {
-  data: [Channel!]!
-  pagination: Pagination!
-}
-
 input CreateChannelDto {
   language: String!
   level: String!
@@ -32,11 +27,15 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input FilterChannelDto {
+input FilterSpeakingClubDto {
   language: String
   level: String
   name: String
   type: String
+}
+
+input GetChannelDto {
+  id: String!
 }
 
 type Mutation {
@@ -64,7 +63,8 @@ input PaginationDto {
 }
 
 type Query {
-  getChannel(filterChannelDto: FilterChannelDto, orderByDto: OrderByDto, paginationDto: PaginationDto): Channels
+  getChannel(getChannelDto: GetChannelDto): Channel
+  getSpeakingClub(filterSpeakingClubDto: FilterSpeakingClubDto, orderByDto: OrderByDto, paginationDto: PaginationDto): SpeakingClub
   hello: String!
 }
 
@@ -80,6 +80,11 @@ input SignUpDto {
   image: String
   name: String!
   password: String
+}
+
+type SpeakingClub {
+  data: [Channel!]!
+  pagination: Pagination!
 }
 
 type User {

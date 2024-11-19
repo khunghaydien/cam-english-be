@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SpeakingClubResolver } from './speaking-club.resolver';
+import { SpeakingRoomResolver } from './speaking-room.resolver';
 
-describe('SpeakingClubResolver', () => {
-  let resolver: SpeakingClubResolver;
+describe('SpeakingRoomResolver', () => {
+  let resolver: SpeakingRoomResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SpeakingClubResolver],
+      providers: [SpeakingRoomResolver],
     }).compile();
 
-    resolver = module.get<SpeakingClubResolver>(SpeakingClubResolver);
+    resolver = module.get<SpeakingRoomResolver>(SpeakingRoomResolver);
   });
 
   it('should be defined', () => {

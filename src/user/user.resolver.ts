@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { User } from './user.response';
-import { SignUpByGoogleDto, SignUpDto } from './user.dto';
 import { UserService } from './user.service';
+import { User } from './entities';
+import { CreateUserDto } from './dto';
 
 @Resolver()
 export class UserResolver {
@@ -10,12 +10,12 @@ export class UserResolver {
     ) { }
 
     @Mutation(() => User, { nullable: true })
-    async signUpByGoogle(@Args('signUpByGoogleDto') signUpByGoogleDto: SignUpByGoogleDto): Promise<User> {
-        return await this.userService.signUpByGoogle(signUpByGoogleDto)
+    async createUserFromProviders(@Args('createUserFromProvidersDto') createUserFromProvidersDto: CreateUserDto): Promise<User> {
+        return await this.userService.createUserFromProviders(createUserFromProvidersDto)
     }
 
     @Mutation(() => User, { nullable: true })
-    async signUp(@Args('signUp') signUpDto: SignUpDto): Promise<User> {
-        return await this.userService.signUp(signUpDto)
+    async createUserFromCredentials(@Args('createUserFromCredentialsDto') createUserFromCredentialsDto: CreateUserDto): Promise<User> {
+        return await this.userService.createUserFromCredentials(createUserFromCredentialsDto)
     }
 }

@@ -13,24 +13,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ELevel {
+enum Level {
   FOUNDATION
-  ADVANCED
   INTERMEDIATE
+  ADVANCED
 }
 
-enum EChannel {
+enum SpeakingRoomType {
   ONLY_ME
   SOLO_LEARN
   ALL_ARE_WELCOME
 }
 
-enum ERole {
+enum Role {
   USER
   ADMIN
 }
 
-enum ELanguage {
+enum Language {
   ENGLISH
   VIETNAMESE
   CHINESE
@@ -54,39 +54,45 @@ enum ELanguage {
 }
 
 model User {
-  id          String        @id @default(uuid())
-  name        String
-  email       String        @unique
-  image       String
-  password    String
-  role        ERole         @default(USER)
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  channels    Channel[]
-  userChannel UserChannel[]
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  image     String
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  speakingRooms     SpeakingRoom[] // Host relationship
+  userSpeakingRooms UserSpeakingRoom[] // Participant relationship
 
   @@index([name])
 }
 
-model UserChannel {
-  id            String  @id @default(uuid())
-  participantId String
-  participant   User    @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  channelId     String
-  channel       Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+model UserSpeakingRoom {
+  id             String       @id @default(uuid())
+  participantId  String
+  participant    User         @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  speakingRoomId String
+  speakingRoom   SpeakingRoom @relation(fields: [speakingRoomId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, speakingRoomId]) // Ensure unique user-room pair
 }
 
-model Channel {
-  id          String        @id @default(uuid())
-  name        String        @unique
-  level       ELevel
-  type        EChannel
-  language    ELanguage
-  hostId      String
-  host        User          @relation(fields: [hostId], references: [id], onDelete: Cascade)
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  userChannel UserChannel[]
+model SpeakingRoom {
+  id        String           @id @default(uuid())
+  name      String           @unique
+  level     Level
+  type      SpeakingRoomType
+  language  Language
+  hostId    String
+  host      User             @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  userSpeakingRooms UserSpeakingRoom[]
 
   @@index([name])
 }

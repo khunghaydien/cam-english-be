@@ -24,7 +24,3 @@ export class CreateUserDto {
     @IsString({ message: "Emage must be string" })
     image: string
 }
-@InputType()
-export class SignUpByGoogleDto extends CreateUserDto { }
-@InputType()
-export class SignUpDto extends CreateUserDto { }

@@ -15,5 +15,5 @@ export class User {
     image?: String
 
     @Field(() => String, { nullable: true })
-    role?: $Enums.ERole
+    role?: $Enums.Role
 }

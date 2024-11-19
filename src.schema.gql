@@ -2,24 +2,18 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Channel {
-  createdAt: DateTime
-  host: User
-  hostId: String
-  id: String!
+input CreateSpeakingRoomDto {
   language: String
   level: String
   name: String
   type: String
-  updatedAt: DateTime
-  userChannel: [UserChannel!]
 }
 
-input CreateChannelDto {
-  language: String!
-  level: String!
+input CreateUserDto {
+  email: String!
+  image: String
   name: String!
-  type: String!
+  password: String
 }
 
 """
@@ -27,21 +21,26 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input FilterSpeakingClubDto {
+input FilterSpeakingRoomDto {
   language: String
   level: String
   name: String
   type: String
 }
 
-input GetChannelDto {
+input GetSpeakingRoomDto {
   id: String!
 }
 
+type ListSpeakingRoom {
+  data: [SpeakingRoom!]!
+  pagination: Pagination!
+}
+
 type Mutation {
-  createChannel(createChannelDto: CreateChannelDto!): Channel
-  signUp(signUp: SignUpDto!): User
-  signUpByGoogle(signUpByGoogleDto: SignUpByGoogleDto!): User
+  createSpeakingRoom(createSpeakingRoomDto: CreateSpeakingRoomDto!): SpeakingRoom
+  createUserFromCredentials(createUserFromCredentialsDto: CreateUserDto!): User
+  createUserFromProviders(createUserFromProvidersDto: CreateUserDto!): User
 }
 
 input OrderByDto {
@@ -63,28 +62,22 @@ input PaginationDto {
 }
 
 type Query {
-  getChannel(getChannelDto: GetChannelDto): Channel
-  getSpeakingClub(filterSpeakingClubDto: FilterSpeakingClubDto, orderByDto: OrderByDto, paginationDto: PaginationDto): SpeakingClub
+  getListSpeakingRoom(filterSpeakingRoomDto: FilterSpeakingRoomDto, orderByDto: OrderByDto, paginationDto: PaginationDto): ListSpeakingRoom
+  getSpeakingRoom(getSpeakingRoomDto: GetSpeakingRoomDto): SpeakingRoom
   hello: String!
 }
 
-input SignUpByGoogleDto {
-  email: String!
-  image: String
-  name: String!
-  password: String
-}
-
-input SignUpDto {
-  email: String!
-  image: String
-  name: String!
-  password: String
-}
-
-type SpeakingClub {
-  data: [Channel!]!
-  pagination: Pagination!
+type SpeakingRoom {
+  createdAt: DateTime
+  host: User
+  hostId: String
+  id: String!
+  language: String
+  level: String
+  name: String
+  type: String
+  updatedAt: DateTime
+  userSpeakingRoom: [UserSpeakingRoom!]
 }
 
 type User {
@@ -95,10 +88,10 @@ type User {
   role: String
 }
 
-type UserChannel {
-  channel: Channel
-  channelId: String
+type UserSpeakingRoom {
   id: String!
   participant: User
   participantId: String
+  speakingRoom: SpeakingRoom
+  speakingRoomId: String
 }

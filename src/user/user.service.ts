@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUserDto, SignUpByGoogleDto, SignUpDto } from './user.dto';
-import { User } from './user.response';
 import * as bcrypt from 'bcrypt'
 import { randomUUID } from 'crypto';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { User } from './entities';
+import { CreateUserDto } from './dto';
 @Injectable()
 export class UserService {
     constructor(
@@ -43,12 +43,12 @@ export class UserService {
         }
     }
 
-    async signUpByGoogle(data: SignUpByGoogleDto): Promise<User> {
+    async createUserFromProviders(data: CreateUserDto): Promise<User> {
         const user = await this.findUserByEmail(data.email);
         return user ?? await this.createUser(data);
     }
 
-    async signUp(data: SignUpDto): Promise<User> {
+    async createUserFromCredentials(data: CreateUserDto): Promise<User> {
         if (await this.findUserByEmail(data.email)) {
             throw new BadRequestException({ email: 'Email already exists.' });
         }

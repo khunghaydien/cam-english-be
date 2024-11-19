@@ -1,5 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsEnum, IsInt, IsOptional, IsString, Min } from "class-validator";
+import { IsInt, IsOptional, Min } from "class-validator";
 
 @InputType()
 export class PaginationDto {
@@ -18,22 +18,4 @@ export class PaginationDto {
     @IsOptional()
     @IsInt({ message: "Initial must be integer" })
     initial?: number;
-}
-
-export enum SortOrder {
-    ASC = 'asc',
-    DESC = 'desc'
-}
-
-@InputType()
-export class OrderByDto {
-    @Field({ nullable: true })
-    @IsString()
-    @IsOptional()
-    field?: string;
-
-    @Field({ nullable: true })
-    @IsOptional()
-    @IsEnum(SortOrder)
-    order?: SortOrder;
 }

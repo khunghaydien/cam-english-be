@@ -6,7 +6,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { AppResolver } from './app.resolver';
-import { SpeakingClubModule } from './speaking-club/speaking-club.module';
+import { SpeakingRoomModule } from './speaking-room/speaking-room.module';
+import { CommonModule } from './common/common.module';
 @Global()
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { SpeakingClubModule } from './speaking-club/speaking-club.module';
       context: ({ req, res }) => ({ req, res })
     }),
     UserModule,
-    SpeakingClubModule,
+    SpeakingRoomModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

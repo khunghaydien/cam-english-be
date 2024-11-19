@@ -1,26 +1,26 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateChannelDto, FilterSpeakingClubDto, GetChannelDto } from '../speaking-club/speaking-club.dto';
-import { Channel, SpeakingClub } from '../speaking-club/speaking-club.response';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
-import { OrderByDto, PaginationDto } from 'src/app.dto';
 import { Prisma } from '@prisma/client';
+import { OrderByDto, PaginationDto } from 'src/common/dto';
+import { ListSpeakingRoom, SpeakingRoom } from './entities';
+import { CreateSpeakingRoomDto, FilterSpeakingRoomDto, GetSpeakingRoomDto } from './dto';
 
 @Injectable()
-export class SpeakingClubService {
+export class SpeakingRoomService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly userService: UserService
     ) { }
 
-    async createChannel({ name, language, type, level }: CreateChannelDto, req: Request): Promise<Channel> {
+    async createSpeakingRoom({ name, language, type, level }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
         const user = await this.userService.verifyUser(req)
         if (!user) {
             throw new BadRequestException({ user: 'User no longer exists' });
         }
         try {
-            return await this.prismaService.channel.create({
+            return await this.prismaService.speakingRoom.create({
                 data: {
                     language,
                     type,
@@ -30,17 +30,17 @@ export class SpeakingClubService {
                 },
                 include: {
                     host: true,
-                    userChannel: false,
+                    userSpeakingRooms: false,
                 }
             })
         } catch (error) {
-            throw new BadRequestException({ channel: 'An error occurred while creating channel.' });
+            throw new BadRequestException({ speakingRoom: 'An error occurred while creating Speaking Room.' });
         }
     }
 
-    async getChannel({ id }: GetChannelDto): Promise<Channel> {
+    async getSpeakingRoom({ id }: GetSpeakingRoomDto): Promise<SpeakingRoom> {
         try {
-            return await this.prismaService.channel.findUnique({
+            return await this.prismaService.speakingRoom.findUnique({
                 where: {
                     id
                 },
@@ -49,29 +49,29 @@ export class SpeakingClubService {
                 }
             })
         } catch (error) {
-            throw new BadRequestException({ channel: 'An error occurred while getting channel.' })
+            throw new BadRequestException({ speakingRoom: 'An error occurred while getting Speaking Room.' })
         }
     }
 
-    async getSpeakingClub(
-        { name, type, level, language }: FilterSpeakingClubDto,
+    async getListSpeakingRoom(
+        { name, type, level, language }: FilterSpeakingRoomDto,
         { page, pageSize }: PaginationDto,
-        { field, order }: OrderByDto): Promise<SpeakingClub> {
-        const where: Prisma.ChannelWhereInput = {
+        { field, order }: OrderByDto): Promise<ListSpeakingRoom> {
+        const where: Prisma.SpeakingRoomWhereInput = {
             ...(name && { name: { contains: name, mode: 'insensitive' } }),
             ...(type && { type }),
             ...(level && { level }),
             ...(language && { language }),
         }
-        const orderBy: Prisma.ChannelOrderByWithRelationInput = {
+        const orderBy: Prisma.SpeakingRoomOrderByWithRelationInput = {
             [field]: order
         }
         const skip = (page - 1) * pageSize;
         const take = pageSize;
         try {
-            const [totalElements, speakingClub] = await Promise.all([
-                this.prismaService.channel.count({ where }),
-                this.prismaService.channel.findMany({
+            const [totalElements, speakingRoom] = await Promise.all([
+                this.prismaService.speakingRoom.count({ where }),
+                this.prismaService.speakingRoom.findMany({
                     where,
                     skip,
                     take,
@@ -80,7 +80,7 @@ export class SpeakingClubService {
             ]);
 
             return {
-                data: speakingClub,
+                data: speakingRoom,
                 pagination: {
                     currentPage: page,
                     pageSize: pageSize,
@@ -89,7 +89,7 @@ export class SpeakingClubService {
                 },
             };
         } catch (error) {
-            throw new BadRequestException({ channel: 'An error occurred while getting speaking club.' })
+            throw new BadRequestException({ speakingRoom: 'An error occurred while getting speaking club.' })
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { User } from "src/user/entities";
-import { SpeakingRoom } from ".";
+import { SpeakingRoom } from "./speaking-room.entity";
 @ObjectType()
 export class UserSpeakingRoom {
     @Field()

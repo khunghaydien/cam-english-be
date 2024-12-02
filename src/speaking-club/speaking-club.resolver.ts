@@ -1,14 +1,14 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { SpeakingRoomService } from './speaking-room.service';
-import { ListSpeakingRoom, SpeakingRoom } from './entities';
-import { CreateSpeakingRoomDto, FilterSpeakingRoomDto, GetSpeakingRoomDto } from './dto';
+import { SpeakingClubService } from './speaking-club.service';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
 import { Request, Response } from 'express';
+import { SpeakingClub, SpeakingRoom } from './entities';
+import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
 
 @Resolver()
-export class SpeakingRoomResolver {
+export class SpeakingClubResolver {
     constructor(
-        private readonly speakingRoomService: SpeakingRoomService
+        private readonly SpeakingClubService: SpeakingClubService
     ) { }
 
     @Mutation(() => SpeakingRoom, { nullable: true })
@@ -16,20 +16,20 @@ export class SpeakingRoomResolver {
         @Args('createSpeakingRoomDto') createSpeakingRoomDto: CreateSpeakingRoomDto,
         @Context() context: { req: Request, res: Response }
     ): Promise<SpeakingRoom> {
-        return await this.speakingRoomService.createSpeakingRoom(createSpeakingRoomDto, context.req)
+        return await this.SpeakingClubService.createSpeakingRoom(createSpeakingRoomDto, context.req)
     }
 
-    @Query(() => ListSpeakingRoom, { nullable: true })
-    async getListSpeakingRoom(
-        @Args('filterSpeakingRoomDto', { nullable: true }) filterSpeakingRoomDto: FilterSpeakingRoomDto,
+    @Query(() => SpeakingClub, { nullable: true })
+    async getSpeakingClub(
+        @Args('filterSpeakingClubDto', { nullable: true }) filterSpeakingClubDto: FilterSpeakingClubDto,
         @Args('paginationDto', { nullable: true }) paginationDto: PaginationDto,
         @Args('orderByDto', { nullable: true }) orderByDto: OrderByDto
-    ): Promise<ListSpeakingRoom> {
-        return await this.speakingRoomService.getListSpeakingRoom(filterSpeakingRoomDto, paginationDto, orderByDto)
+    ): Promise<SpeakingClub> {
+        return await this.SpeakingClubService.getSpeakingClub(filterSpeakingClubDto, paginationDto, orderByDto)
     }
 
     @Query(() => SpeakingRoom, { nullable: true })
     async getSpeakingRoom(@Args('getSpeakingRoomDto', { nullable: true }) getSpeakingRoomDto: GetSpeakingRoomDto): Promise<SpeakingRoom> {
-        return this.speakingRoomService.getSpeakingRoom(getSpeakingRoomDto)
+        return this.SpeakingClubService.getSpeakingRoom(getSpeakingRoomDto)
     }
 }

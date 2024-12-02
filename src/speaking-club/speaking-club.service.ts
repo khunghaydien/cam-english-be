@@ -2,19 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, SpeakingRoomType } from '@prisma/client';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
-import { ListSpeakingRoom, SpeakingRoom } from './entities';
-import { CreateSpeakingRoomDto, FilterSpeakingRoomDto, GetSpeakingRoomDto } from './dto';
+import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
+import { SpeakingClub, SpeakingRoom } from './entities';
 
 @Injectable()
-export class SpeakingRoomService {
+export class SpeakingClubService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly userService: UserService
     ) { }
 
-    async createSpeakingRoom({ name, language, type, level }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
+    async createSpeakingRoom({ name, language, type, level, offer }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
         const user = await this.userService.verifyUser(req)
         if (!user) {
             throw new BadRequestException({ user: 'User no longer exists' });
@@ -26,6 +26,7 @@ export class SpeakingRoomService {
                     type,
                     name,
                     level,
+                    offer,
                     hostId: user.id
                 },
                 include: {
@@ -34,7 +35,7 @@ export class SpeakingRoomService {
                 }
             })
         } catch (error) {
-            throw new BadRequestException({ speakingRoom: 'An error occurred while creating Speaking Room.' });
+            throw new BadRequestException({ SpeakingRoom: 'An error occurred while creating Speaking Room.' });
         }
     }
 
@@ -53,15 +54,15 @@ export class SpeakingRoomService {
         }
     }
 
-    async getListSpeakingRoom(
-        { name, type, level, language }: FilterSpeakingRoomDto,
+    async getSpeakingClub(
+        { name, type, level, language }: FilterSpeakingClubDto,
         { page, pageSize }: PaginationDto,
-        { field, order }: OrderByDto): Promise<ListSpeakingRoom> {
+        { field, order }: OrderByDto): Promise<SpeakingClub> {
         const where: Prisma.SpeakingRoomWhereInput = {
             ...(name && { name: { contains: name, mode: 'insensitive' } }),
-            ...(type && { type }),
-            ...(level && { level }),
-            ...(language && { language }),
+            ...(type && { type: { in: type } }),
+            ...(level && { level: { in: level } }),
+            ...(language && { language: { in: language } }),
         }
         const orderBy: Prisma.SpeakingRoomOrderByWithRelationInput = {
             [field]: order

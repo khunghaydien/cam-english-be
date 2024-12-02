@@ -1,9 +1,9 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { SpeakingRoom } from ".";
 import { Pagination } from "src/common/entities";
+import { SpeakingRoom } from "./speaking-room.entity";
 
 @ObjectType()
-export class ListSpeakingRoom {
+export class SpeakingClub {
     @Field(() => [SpeakingRoom])
     data: SpeakingRoom[];
 

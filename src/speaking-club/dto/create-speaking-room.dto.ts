@@ -1,6 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Language, Level, SpeakingRoomType } from "@prisma/client";
 import { IsNotEmpty, IsString } from "class-validator";
+import GraphQLJSON from 'graphql-type-json';
 @InputType()
 export class CreateSpeakingRoomDto {
     @Field(() => String, { nullable: true })
@@ -24,4 +25,8 @@ export class CreateSpeakingRoomDto {
     @IsNotEmpty({ message: "Type is required" })
     @IsString({ message: 'Type must be string' })
     type: SpeakingRoomType
+
+    @Field(() => GraphQLJSON)
+    @IsNotEmpty({ message: "Offer is required" })
+    offer: any;
 }

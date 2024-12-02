@@ -40,6 +40,7 @@ CREATE TABLE "SpeakingRoom" (
     "level" "Level" NOT NULL,
     "type" "SpeakingRoomType" NOT NULL,
     "language" "Language" NOT NULL,
+    "offer" JSONB NOT NULL,
     "hostId" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,

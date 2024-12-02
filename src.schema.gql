@@ -6,6 +6,7 @@ input CreateSpeakingRoomDto {
   language: String
   level: String
   name: String
+  offer: JSON!
   type: String
 }
 
@@ -21,21 +22,21 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input FilterSpeakingRoomDto {
-  language: String
-  level: String
+input FilterSpeakingClubDto {
+  language: [String!]
+  level: [String!]
   name: String
-  type: String
+  type: [String!]
 }
 
 input GetSpeakingRoomDto {
   id: String!
 }
 
-type ListSpeakingRoom {
-  data: [SpeakingRoom!]!
-  pagination: Pagination!
-}
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type Mutation {
   createSpeakingRoom(createSpeakingRoomDto: CreateSpeakingRoomDto!): SpeakingRoom
@@ -62,9 +63,14 @@ input PaginationDto {
 }
 
 type Query {
-  getListSpeakingRoom(filterSpeakingRoomDto: FilterSpeakingRoomDto, orderByDto: OrderByDto, paginationDto: PaginationDto): ListSpeakingRoom
+  getSpeakingClub(filterSpeakingClubDto: FilterSpeakingClubDto, orderByDto: OrderByDto, paginationDto: PaginationDto): SpeakingClub
   getSpeakingRoom(getSpeakingRoomDto: GetSpeakingRoomDto): SpeakingRoom
   hello: String!
+}
+
+type SpeakingClub {
+  data: [SpeakingRoom!]!
+  pagination: Pagination!
 }
 
 type SpeakingRoom {
@@ -75,9 +81,10 @@ type SpeakingRoom {
   language: String
   level: String
   name: String
+  offer: JSON
   type: String
   updatedAt: DateTime
-  userSpeakingRoom: [UserSpeakingRoom!]
+  userSpeakingRooms: [UserSpeakingRoom!]
 }
 
 type User {

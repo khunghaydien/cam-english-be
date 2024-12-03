@@ -1,22 +1,49 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { SpeakingClubService } from './speaking-club.service';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
 import { Request, Response } from 'express';
 import { SpeakingClub, SpeakingRoom } from './entities';
-import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
-
+import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto, UpdateSpeakingRoomDto } from './dto';
+import { PubsubService } from 'src/common/services/pubsub.service';
 @Resolver()
 export class SpeakingClubResolver {
     constructor(
-        private readonly SpeakingClubService: SpeakingClubService
+        private readonly SpeakingClubService: SpeakingClubService,
+        private readonly pubSubService: PubsubService
     ) { }
+
+    @Mutation(() => SpeakingRoom, { nullable: true })
+    async updateSpeakingRoom(
+        @Args('updateSpeakingRoomDto') updateSpeakingRoomDto: UpdateSpeakingRoomDto,
+        @Context() context: { req: Request, res: Response }
+    ): Promise<SpeakingRoom> {
+        const speakingRoom = await this.SpeakingClubService.updateSpeakingRoom(updateSpeakingRoomDto, context.req)
+        await this.pubSubService.publish('speakingRoomSubscription', { speakingRoomSubscription: speakingRoom })
+        return speakingRoom
+    }
 
     @Mutation(() => SpeakingRoom, { nullable: true })
     async createSpeakingRoom(
         @Args('createSpeakingRoomDto') createSpeakingRoomDto: CreateSpeakingRoomDto,
         @Context() context: { req: Request, res: Response }
     ): Promise<SpeakingRoom> {
-        return await this.SpeakingClubService.createSpeakingRoom(createSpeakingRoomDto, context.req)
+        const speakingRoom = await this.SpeakingClubService.createSpeakingRoom(createSpeakingRoomDto, context.req)
+        await this.pubSubService.publish('speakingRoomSubscription', { speakingRoomSubscription: speakingRoom })
+        return speakingRoom
+    }
+
+    @Subscription(() => SpeakingRoom, {
+        nullable: true,
+        name: 'speakingRoomSubscription',
+        filter: (payload, variables) => {
+            if (variables.roomId) {
+                return payload.speakingRoomSubscription.id === variables.roomId
+            }
+            return true;
+        },
+    })
+    speakingRoomSubscription(@Args('roomId', { nullable: true }) roomId: string) {
+        return this.pubSubService.asyncIterator('speakingRoomSubscription');
     }
 
     @Query(() => SpeakingClub, { nullable: true })

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
-import { Prisma, SpeakingRoomType } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
 import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto, UpdateSpeakingRoomDto } from './dto';
 import { SpeakingClub, SpeakingRoom } from './entities';
@@ -100,6 +100,9 @@ export class SpeakingClubService {
                     skip,
                     take,
                     orderBy,
+                    include: {
+                        host: true
+                    }
                 }),
             ]);
 

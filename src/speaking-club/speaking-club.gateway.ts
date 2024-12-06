@@ -1,6 +1,8 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-
+import { parse } from 'cookie';
+import { UserService } from 'src/user/user.service';
 @WebSocketGateway({
   cors: {
     origin: 'http://localhost:3000',
@@ -9,28 +11,27 @@ import { Socket } from 'socket.io';
   },
 })
 export class SpeakingClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
-
-  // When a user connects
-  handleConnection(socket: Socket) {
-    socket.emit('me', socket.id); // Emit the user's socket ID to them
+  constructor(
+    private readonly userService: UserService
+  ) { }
+  async handleConnection(socket: Socket) {
+    const cookies = socket.handshake.headers.cookie
+    if (!cookies) {
+      throw new UnauthorizedException({
+        user: 'An error occurred while authenticating the user. No cookies found.',
+      });
+    }
+    const parseCookies = parse(cookies);
+    const sessionToken = parseCookies['next-auth.session-token'];
+    const user = await this.userService.verifyUser(sessionToken)
+    if (!user) {
+      throw new UnauthorizedException({
+        user: 'User no longer exists',
+      });
+    }
+    console.log(user);
   }
-
-  // When a user disconnects
   handleDisconnect(socket: Socket) {
-    socket.broadcast.emit('callEnded'); // Broadcast 'callEnded' to other connected clients
-  }
-
-  @SubscribeMessage('callUser')
-  handleCallUser(socket: Socket, payload: { userToCall: string; signalData: any; from: string; name: string }) {
-    socket.to(payload.userToCall).emit('callUser', {
-      signal: payload.signalData,
-      from: payload.from,
-      name: payload.name
-    })
-  }
-
-  @SubscribeMessage('answerCall')
-  handleAnswerCall(socket: Socket, data: { to: string; signal: any }) {
-    socket.to(data.to).emit("callAccepted", data.signal);
+    // console.log(socket);
   }
 }

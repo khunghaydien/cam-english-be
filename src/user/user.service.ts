@@ -15,8 +15,7 @@ export class UserService {
         private readonly configService: ConfigService
     ) { }
 
-    async verifyUser(req: Request): Promise<User | null> {
-        const sessionToken = req.cookies['next-auth.session-token'] as string;
+    async verifyUser(sessionToken: string): Promise<User | null> {
         const payload = await this.jwtService.verify(sessionToken, {
             secret: this.configService.get<string>('NEXTAUTH_SECRET'),
         });

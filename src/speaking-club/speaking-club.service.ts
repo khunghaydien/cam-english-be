@@ -15,7 +15,8 @@ export class SpeakingClubService {
     ) { }
 
     async updateSpeakingRoom({ id, offer }: UpdateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
-        const user = await this.userService.verifyUser(req)
+        const sessionToken = req.cookies['next-auth.session-token'] as string;
+        const user = await this.userService.verifyUser(sessionToken)
         if (!user) {
             throw new BadRequestException({ user: 'User no longer exists' });
         }
@@ -38,7 +39,8 @@ export class SpeakingClubService {
     }
 
     async createSpeakingRoom({ name, language, type, level, offer }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
-        const user = await this.userService.verifyUser(req)
+        const sessionToken = req.cookies['next-auth.session-token'] as string;
+        const user = await this.userService.verifyUser(sessionToken)
         if (!user) {
             throw new BadRequestException({ user: 'User no longer exists' });
         }

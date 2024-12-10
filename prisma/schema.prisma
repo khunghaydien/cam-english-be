@@ -86,7 +86,6 @@ model SpeakingRoom {
   level     Level
   type      SpeakingRoomType
   language  Language
-  offer     Json
   hostId    String
   host      User             @relation(fields: [hostId], references: [id], onDelete: Cascade)
   createdAt DateTime         @default(now()) @map("created_at")

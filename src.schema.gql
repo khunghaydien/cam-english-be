@@ -6,7 +6,6 @@ input CreateSpeakingRoomDto {
   language: String
   level: String
   name: String
-  offer: JSON!
   type: String
 }
 
@@ -42,7 +41,6 @@ type Mutation {
   createSpeakingRoom(createSpeakingRoomDto: CreateSpeakingRoomDto!): SpeakingRoom
   createUserFromCredentials(createUserFromCredentialsDto: CreateUserDto!): User
   createUserFromProviders(createUserFromProvidersDto: CreateUserDto!): User
-  updateSpeakingRoom(updateSpeakingRoomDto: UpdateSpeakingRoomDto!): SpeakingRoom
 }
 
 input OrderByDto {
@@ -90,11 +88,6 @@ type SpeakingRoom {
 
 type Subscription {
   speakingRoomSubscription(roomId: String): SpeakingRoom
-}
-
-input UpdateSpeakingRoomDto {
-  id: String!
-  offer: JSON
 }
 
 type User {

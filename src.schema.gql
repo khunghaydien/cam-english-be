@@ -87,7 +87,7 @@ type SpeakingRoom {
 }
 
 type Subscription {
-  speakingRoomSubscription(roomId: String): SpeakingRoom
+  speakingRoomSubscription: SpeakingRoom
 }
 
 type User {

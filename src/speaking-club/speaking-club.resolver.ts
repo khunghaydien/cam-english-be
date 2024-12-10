@@ -25,14 +25,11 @@ export class SpeakingClubResolver {
     @Subscription(() => SpeakingRoom, {
         nullable: true,
         name: 'speakingRoomSubscription',
-        filter: (payload, variables) => {
-            if (variables.roomId) {
-                return payload.speakingRoomSubscription.id === variables.roomId
-            }
+        filter: (_payload, _variables) => {
             return true;
         },
     })
-    speakingRoomSubscription(@Args('roomId', { nullable: true }) roomId: string) {
+    speakingRoomSubscription() {
         return this.pubSubService.asyncIterator('speakingRoomSubscription');
     }
 

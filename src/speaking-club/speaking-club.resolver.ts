@@ -3,7 +3,7 @@ import { SpeakingClubService } from './speaking-club.service';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
 import { Request, Response } from 'express';
 import { SpeakingClub, SpeakingRoom } from './entities';
-import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto, UpdateSpeakingRoomDto } from './dto';
+import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
 import { PubsubService } from 'src/common/services/pubsub.service';
 @Resolver()
 export class SpeakingClubResolver {
@@ -11,16 +11,6 @@ export class SpeakingClubResolver {
         private readonly SpeakingClubService: SpeakingClubService,
         private readonly pubSubService: PubsubService
     ) { }
-
-    @Mutation(() => SpeakingRoom, { nullable: true })
-    async updateSpeakingRoom(
-        @Args('updateSpeakingRoomDto') updateSpeakingRoomDto: UpdateSpeakingRoomDto,
-        @Context() context: { req: Request, res: Response }
-    ): Promise<SpeakingRoom> {
-        const speakingRoom = await this.SpeakingClubService.updateSpeakingRoom(updateSpeakingRoomDto, context.req)
-        await this.pubSubService.publish('speakingRoomSubscription', { speakingRoomSubscription: speakingRoom })
-        return speakingRoom
-    }
 
     @Mutation(() => SpeakingRoom, { nullable: true })
     async createSpeakingRoom(

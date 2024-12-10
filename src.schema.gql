@@ -6,7 +6,6 @@ input CreateSpeakingRoomDto {
   language: String
   level: String
   name: String
-  offer: JSON!
   type: String
 }
 
@@ -33,16 +32,10 @@ input GetSpeakingRoomDto {
   id: String!
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
 type Mutation {
   createSpeakingRoom(createSpeakingRoomDto: CreateSpeakingRoomDto!): SpeakingRoom
   createUserFromCredentials(createUserFromCredentialsDto: CreateUserDto!): User
   createUserFromProviders(createUserFromProvidersDto: CreateUserDto!): User
-  updateSpeakingRoom(updateSpeakingRoomDto: UpdateSpeakingRoomDto!): SpeakingRoom
 }
 
 input OrderByDto {
@@ -82,7 +75,6 @@ type SpeakingRoom {
   language: String
   level: String
   name: String
-  offer: JSON
   type: String
   updatedAt: DateTime
   userSpeakingRooms: [UserSpeakingRoom!]
@@ -90,11 +82,6 @@ type SpeakingRoom {
 
 type Subscription {
   speakingRoomSubscription(roomId: String): SpeakingRoom
-}
-
-input UpdateSpeakingRoomDto {
-  id: String!
-  offer: JSON
 }
 
 type User {

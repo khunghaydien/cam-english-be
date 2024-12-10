@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { Prisma } from '@prisma/client';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
-import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto, UpdateSpeakingRoomDto } from './dto';
+import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
 import { SpeakingClub, SpeakingRoom } from './entities';
 
 @Injectable()
@@ -14,31 +14,7 @@ export class SpeakingClubService {
         private readonly userService: UserService
     ) { }
 
-    async updateSpeakingRoom({ id, offer }: UpdateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
-        const sessionToken = req.cookies['next-auth.session-token'] as string;
-        const user = await this.userService.verifyUser(sessionToken)
-        if (!user) {
-            throw new BadRequestException({ user: 'User no longer exists' });
-        }
-        try {
-            return await this.prismaService.speakingRoom.update({
-                where: {
-                    id
-                },
-                data: {
-                    offer
-                },
-                include: {
-                    host: true,
-                    userSpeakingRooms: false,
-                }
-            })
-        } catch (error) {
-            throw new BadRequestException({ SpeakingRoom: 'An error occurred while updating Speaking Room.' });
-        }
-    }
-
-    async createSpeakingRoom({ name, language, type, level, offer }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
+    async createSpeakingRoom({ name, language, type, level }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
         const sessionToken = req.cookies['next-auth.session-token'] as string;
         const user = await this.userService.verifyUser(sessionToken)
         if (!user) {
@@ -51,7 +27,6 @@ export class SpeakingClubService {
                     type,
                     name,
                     level,
-                    offer,
                     hostId: user.id
                 },
                 include: {

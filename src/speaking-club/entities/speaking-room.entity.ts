@@ -2,7 +2,6 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { $Enums } from "@prisma/client";
 import { User } from "src/user/entities";
 import { UserSpeakingRoom } from "./user-speaking-room.entity";
-import GraphQLJSON from "graphql-type-json";
 @ObjectType()
 export class SpeakingRoom {
     @Field()
@@ -19,9 +18,6 @@ export class SpeakingRoom {
 
     @Field(() => String, { nullable: true })
     type?: $Enums.SpeakingRoomType;
-
-    @Field(() => GraphQLJSON, { nullable: true })
-    offer?: any
 
     @Field(() => String, { nullable: true })
     hostId?: string;

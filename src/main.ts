@@ -8,7 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:3000', // Frontend URL
+    origin: [
+      'http://localhost:3000', // Localhost
+      'https://cam-english-fe.vercel.app', // Frontend domain
+    ], // Frontend URL
     credentials: true, // Allow cookies and authorization headers
     allowedHeaders: [
       'Accept',
@@ -39,6 +42,6 @@ async function bootstrap() {
   );
   app.setGlobalPrefix('api');
 
-  await app.listen(3030);
+  await app.listen(8080);
 }
 bootstrap();

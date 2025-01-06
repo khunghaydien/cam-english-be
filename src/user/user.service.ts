@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from './entities';
-import { CreateUserDto } from './dto';
+import { AuthorizationLoginDto, CreateUserDto } from './dto';
 @Injectable()
 export class UserService {
     constructor(
@@ -22,35 +22,42 @@ export class UserService {
         return await this.findUserByEmail(payload.email)
     }
 
-    async hashPassword(password?: string): Promise<string> {
-        return await bcrypt.hash(password ?? randomUUID(), 10);
-    }
-
     async findUserByEmail(email: string): Promise<User | null> {
         return await this.prismaService.user.findUnique({ where: { email } });
     }
 
-    async createUser(data: CreateUserDto): Promise<User> {
-        const { name, email, image, password } = data;
-        const hashedPassword = await this.hashPassword(password);
+    async authorizationLogin({ name, email, image }: AuthorizationLoginDto): Promise<User> {
+        const user = await this.findUserByEmail(email);
+        if (user) return user
         try {
             return await this.prismaService.user.create({
-                data: { name, email, password: hashedPassword, image },
+                data: {
+                    name,
+                    email,
+                    image,
+                    password: bcrypt.hash(randomUUID(), 10)
+                },
+            });
+        } catch {
+            throw new BadRequestException({ user: 'An error occurred while login.' });
+        }
+    }
+
+    async createUser({ name, email, image, password }: CreateUserDto): Promise<User> {
+        if (await this.findUserByEmail(email)) {
+            throw new BadRequestException({ email: 'Email already exists.' });
+        }
+        try {
+            return await this.prismaService.user.create({
+                data: {
+                    name,
+                    email,
+                    image,
+                    password: bcrypt.hash(password, 10)
+                },
             });
         } catch {
             throw new BadRequestException({ user: 'An error occurred while creating user.' });
         }
-    }
-
-    async createUserFromProviders(data: CreateUserDto): Promise<User> {
-        const user = await this.findUserByEmail(data.email);
-        return user ?? await this.createUser(data);
-    }
-
-    async createUserFromCredentials(data: CreateUserDto): Promise<User> {
-        if (await this.findUserByEmail(data.email)) {
-            throw new BadRequestException({ email: 'Email already exists.' });
-        }
-        return await this.createUser(data);
     }
 }

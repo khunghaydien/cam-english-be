@@ -2,8 +2,8 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, Length } from "class-validat
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
-export class CreateUserDto {
-    @Field(() => String)
+export class SignUpDto {
+    @Field(() => String, { nullable: true })
     @IsNotEmpty({ message: 'Name is required' })
     @IsString({ message: "Name must be string" })
     name: string
@@ -14,9 +14,9 @@ export class CreateUserDto {
     @Length(8, 16, { message: "Password must be between 8 and 16 characters" })
     password: string
 
-    @Field()
-    @IsNotEmpty({ message: 'Email is requied.' })
-    @IsEmail({}, { message: 'Email must be valid' })
+    @Field(() => String, { nullable: true })
+    @IsNotEmpty({ message: 'Name is required' })
+    @IsString({ message: "Name must be string" })
     email: string
 
     @Field(() => String, { nullable: true })

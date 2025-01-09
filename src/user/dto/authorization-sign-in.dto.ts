@@ -2,7 +2,7 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, Length } from "class-validat
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
-export class AuthorizationLoginDto {
+export class AuthorizationSignInDto {
     @Field(() => String)
     @IsNotEmpty({ message: 'Name is required' })
     @IsString({ message: "Name must be string" })

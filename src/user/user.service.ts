@@ -16,10 +16,14 @@ export class UserService {
   ) {}
 
   async verifyUser(sessionToken: string): Promise<User | null> {
-    const payload = await this.jwtService.verify(sessionToken, {
-      secret: this.configService.get<string>('NEXTAUTH_SECRET'),
-    });
-    return await this.findUserByEmail(payload.email);
+    try {
+      const payload = await this.jwtService.verifyAsync(sessionToken, {
+        secret: this.configService.get<string>('NEXTAUTH_SECRET'),
+      });
+      return await this.findUserByEmail(payload.email);
+    } catch (error) {
+      return null;
+    }
   }
 
   async findUserByEmail(email: string): Promise<User | null> {

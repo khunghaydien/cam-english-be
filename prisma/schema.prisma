@@ -26,7 +26,7 @@ enum SpeakingRoomType {
 }
 
 enum Role {
-  USER
+  MEMBER
   ADMIN
 }
 
@@ -59,7 +59,7 @@ model User {
   email     String   @unique
   image     String
   password  String
-  role      Role     @default(USER)
+  role      Role     @default(MEMBER)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

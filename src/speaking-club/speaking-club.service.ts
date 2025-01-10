@@ -1,25 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { Request } from 'express';
-import { UserService } from 'src/user/user.service';
 import { Prisma } from '@prisma/client';
 import { OrderByDto, PaginationDto } from 'src/common/dto';
 import { CreateSpeakingRoomDto, FilterSpeakingClubDto, GetSpeakingRoomDto } from './dto';
 import { SpeakingClub, SpeakingRoom } from './entities';
+import { User } from 'src/user/entities';
 
 @Injectable()
 export class SpeakingClubService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly userService: UserService
     ) { }
 
-    async createSpeakingRoom({ name, language, type, level }: CreateSpeakingRoomDto, req: Request): Promise<SpeakingRoom> {
-        const sessionToken = req.cookies['next-auth.session-token'] as string;
-        const user = await this.userService.verifyUser(sessionToken)
-        if (!user) {
-            throw new BadRequestException({ user: 'User no longer exists' });
-        }
+    async createSpeakingRoom({ name, language, type, level }: CreateSpeakingRoomDto, user: User): Promise<SpeakingRoom> {
         try {
             return await this.prismaService.speakingRoom.create({
                 data: {

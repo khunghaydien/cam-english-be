@@ -8,7 +8,7 @@ import { SpeakingClubService } from './speaking-club.service';
   cors: {
     origin: [
       'http://localhost:3000', 
-      'https://cam-english-fe.vercel.app', 
+      'https://cam-english-fe.vercel.app',
     ],
     credentials: true,
     methods: ['GET', 'POST'],

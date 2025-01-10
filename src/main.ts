@@ -9,8 +9,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:3000', 
-      'https://cam-english-fe.vercel.app',
+      'http://localhost:3000', // Your frontend URL
+      'https://cam-english-fe.vercel.app', // Your backend URL
     ],
     credentials: true, // Allow cookies and authorization headers
     allowedHeaders: [

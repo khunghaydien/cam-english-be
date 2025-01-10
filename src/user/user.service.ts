@@ -38,12 +38,13 @@ export class UserService {
     const user = await this.findUserByEmail(email);
     if (user) return user;
     try {
+      const hashedPassword = await bcrypt.hash(randomUUID(), 10);
       return await this.prismaService.user.create({
         data: {
           name,
           email,
           image,
-          password: bcrypt.hash(randomUUID(), 10),
+          password: hashedPassword,
         },
       });
     } catch {
@@ -78,7 +79,7 @@ export class UserService {
           password: hashedPassword,
         },
       });
-    } catch(e) {
+    } catch (e) {
       throw new BadRequestException({
         user: e,
       });

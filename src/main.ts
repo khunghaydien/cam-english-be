@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
+import * as express from 'express';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -18,13 +19,22 @@ async function bootstrap() {
       'Authorization',
       'X-Requested-With',
       'apollo-require-preflight',
-      'Content-Type', // Add any additional headers your client may need
+      'Content-Type',
+      'Cookie',
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // HTTP methods allowed
   });
 
+  // Use express body-parser middleware for large payloads
+  app.use(express.json({ limit: "16mb" }));
+  app.use(express.urlencoded({ limit: "16mb", extended: true, parameterLimit: 50000 }));
+
   // Use cookie parser middleware
-  app.use(cookieParser());
+  app.use(cookieParser('secret', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+  }));
 
   // Use global validation pipe
   app.useGlobalPipes(
@@ -40,8 +50,9 @@ async function bootstrap() {
       },
     }),
   );
-  app.setGlobalPrefix('api');
 
-  await app.listen(8080);
+  app.setGlobalPrefix('api');
+  const PORT = process.env.PORT || 8080;
+  await app.listen(PORT);
 }
 bootstrap();

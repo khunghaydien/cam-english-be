@@ -16,6 +16,7 @@ import { SpeakingClubModule } from './speaking-club/speaking-club.module';
       autoSchemaFile: join(process.cwd(), 'src.schema.gql'),
       sortSchema: true,
       playground: true,
+      path: '/graphql',
       installSubscriptionHandlers: true,
       subscriptions: {
         'graphql-ws': true

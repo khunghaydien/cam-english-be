@@ -7,11 +7,18 @@ import { SpeakingClubService } from './speaking-club.service';
 @WebSocketGateway({
   cors: {
     origin: [
-      'http://localhost:3000', 
-      'https://cam-english-fe.vercel.app',
+      'http://localhost:3000', // Your frontend URL
+      'https://cam-english-fe.vercel.app', // Your backend URL
     ],
-    credentials: true,
-    methods: ['GET', 'POST'],
+    credentials: true, // Allow cookies and authorization headers
+    allowedHeaders: [
+      'Accept',
+      'Authorization',
+      'X-Requested-With',
+      'apollo-require-preflight',
+      'Content-Type', // Add any additional headers your client may need
+    ],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   },
 })
 export class SpeakingClubGateway implements OnGatewayConnection, OnGatewayDisconnect {

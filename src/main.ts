@@ -29,12 +29,7 @@ async function bootstrap() {
   app.use(express.json({ limit: "16mb" }));
   app.use(express.urlencoded({ limit: "16mb", extended: true, parameterLimit: 50000 }));
 
-  // Use cookie parser middleware
-  app.use(cookieParser('secret', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-  }));
+  app.use(cookieParser());
 
   // Use global validation pipe
   app.useGlobalPipes(

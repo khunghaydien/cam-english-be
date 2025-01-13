@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './entities';
 import { AuthorizationSignInDto, SignUpDto } from './dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { Response } from 'express';
 @Injectable()
 export class UserService {
   constructor(
@@ -38,15 +39,7 @@ export class UserService {
     const user = await this.findUserByEmail(email);
     if (user) return user;
     try {
-      const hashedPassword = await bcrypt.hash(randomUUID(), 10);
-      return await this.prismaService.user.create({
-        data: {
-          name,
-          email,
-          image,
-          password: hashedPassword,
-        },
-      });
+      return await this.signUp({ name, email, image, password: randomUUID() });
     } catch {
       throw new BadRequestException({
         user: 'An error occurred while SignIn.',

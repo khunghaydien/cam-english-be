@@ -12,7 +12,9 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context).getContext();
     const req = ctx?.req;
-    const sessionToken = req?.cookies?.['next-auth.session-token'] as string;
+    const sessionToken =
+      req?.cookies?.['__Secure-next-auth.session-token'] ??
+      req?.cookies?.['next-auth.session-token'];
     if (!sessionToken) {
       throw new UnauthorizedException('Session token is missing');
     }

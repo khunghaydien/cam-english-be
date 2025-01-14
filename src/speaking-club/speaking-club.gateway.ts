@@ -1,5 +1,10 @@
 import { BadGatewayException, UnauthorizedException } from '@nestjs/common';
-import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { parse } from 'cookie';
 import { UserService } from 'src/user/user.service';
@@ -21,17 +26,21 @@ import { SpeakingClubService } from './speaking-club.service';
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   },
 })
-export class SpeakingClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class SpeakingClubGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(
     private readonly userService: UserService,
-    private readonly speakingClubService: SpeakingClubService
-  ) { }
+    private readonly speakingClubService: SpeakingClubService,
+  ) {}
 
   /** Handles connection and join socket */
   async handleConnection(socket: Socket) {
     try {
       const cookies = parse(socket.handshake.headers.cookie || '');
-      const sessionToken = cookies['next-auth.session-token'];
+      const sessionToken =
+        cookies?.['__Secure-next-auth.session-token'] ??
+        cookies?.['next-auth.session-token'];
       const { roomId } = socket.handshake.query || {};
 
       if (!sessionToken) {
@@ -45,7 +54,9 @@ export class SpeakingClubGateway implements OnGatewayConnection, OnGatewayDiscon
         throw new UnauthorizedException('User verification failed');
       }
 
-      const speakingRoom = await this.speakingClubService.getSpeakingRoom({ id: roomId as string });
+      const speakingRoom = await this.speakingClubService.getSpeakingRoom({
+        id: roomId as string,
+      });
       if (!speakingRoom) {
         socket.disconnect();
         throw new BadGatewayException('Speaking room not found');
@@ -62,28 +73,28 @@ export class SpeakingClubGateway implements OnGatewayConnection, OnGatewayDiscon
 
   /** Handles disconnection and performs cleanup */
   handleDisconnect(socket: Socket) {
-    const { user, roomId } = socket.data
+    const { user, roomId } = socket.data;
     socket.to(roomId).emit('disconnected', { user });
   }
 
   /** Handles emit offer */
   @SubscribeMessage('offer')
   handleOffer(socket: Socket, payload: { offer: RTCSessionDescription }) {
-    const roomId = socket.data.roomId
+    const roomId = socket.data.roomId;
     socket.to(roomId).emit('offer', { offer: payload.offer });
   }
 
   /** Handles emit answer */
   @SubscribeMessage('answer')
   handleAnswer(socket: Socket, payload: { answer: RTCSessionDescription }) {
-    const roomId = socket.data.roomId
+    const roomId = socket.data.roomId;
     socket.to(roomId).emit('answer', { answer: payload.answer });
   }
 
   /** Handles emit iceCandidate */
   @SubscribeMessage('iceCandidate')
   handleIceCandidate(socket: Socket, payload: { candidate: RTCIceCandidate }) {
-    const roomId = socket.data.roomId
+    const roomId = socket.data.roomId;
     socket.to(roomId).emit('iceCandidate', { candidate: payload.candidate });
   }
 }

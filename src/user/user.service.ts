@@ -7,7 +7,6 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './entities';
 import { AuthorizationSignInDto, SignUpDto } from './dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { Response } from 'express';
 @Injectable()
 export class UserService {
   constructor(

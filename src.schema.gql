@@ -8,6 +8,12 @@ input AuthorizationSignInDto {
   name: String!
 }
 
+input CreateExpenseDto {
+  amount: String
+  date: String
+  description: String
+}
+
 input CreateSpeakingRoomDto {
   language: String
   level: String
@@ -19,6 +25,17 @@ input CreateSpeakingRoomDto {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Expense {
+  amount: String
+  author: User
+  authorId: String
+  createdAt: DateTime
+  date: String
+  description: String
+  id: String!
+  updatedAt: DateTime
+}
 
 input FilterSpeakingClubDto {
   language: [String!]
@@ -38,6 +55,7 @@ scalar JSON
 
 type Mutation {
   authorizationSignIn(authorizationSignInDto: AuthorizationSignInDto!): User
+  createExpense(createExpenseDto: CreateExpenseDto!): Expense
   createSpeakingRoom(createSpeakingRoomDto: CreateSpeakingRoomDto!): SpeakingRoom
   signIn(signInDto: SignInDto!): User
   signUp(signUpDto: SignUpDto!): User

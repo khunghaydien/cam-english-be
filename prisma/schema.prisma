@@ -66,6 +66,7 @@ model User {
   // Relations
   speakingRooms     SpeakingRoom[] // Host relationship
   userSpeakingRooms UserSpeakingRoom[] // Participant relationship
+  Expense           Expense[]
 
   @@index([name])
 }
@@ -95,4 +96,17 @@ model SpeakingRoom {
   userSpeakingRooms UserSpeakingRoom[]
 
   @@index([name])
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  date        String
+  description String
+  amount      String
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([description])
 }

@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { AppResolver } from './app.resolver';
 import { CommonModule } from './common/common.module';
 import { SpeakingClubModule } from './speaking-club/speaking-club.module';
+import { ExpenseModule } from './expense/expense.module';
 @Global()
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SpeakingClubModule } from './speaking-club/speaking-club.module';
     UserModule,
     SpeakingClubModule,
     CommonModule,
+    ExpenseModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

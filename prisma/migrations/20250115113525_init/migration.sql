@@ -47,6 +47,19 @@ CREATE TABLE "SpeakingRoom" (
     CONSTRAINT "SpeakingRoom_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Expense" (
+    "id" TEXT NOT NULL,
+    "date" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "amount" TEXT NOT NULL,
+    "authorId" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Expense_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -62,6 +75,9 @@ CREATE UNIQUE INDEX "SpeakingRoom_name_key" ON "SpeakingRoom"("name");
 -- CreateIndex
 CREATE INDEX "SpeakingRoom_name_idx" ON "SpeakingRoom"("name");
 
+-- CreateIndex
+CREATE INDEX "Expense_description_idx" ON "Expense"("description");
+
 -- AddForeignKey
 ALTER TABLE "UserSpeakingRoom" ADD CONSTRAINT "UserSpeakingRoom_participantId_fkey" FOREIGN KEY ("participantId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -70,3 +86,6 @@ ALTER TABLE "UserSpeakingRoom" ADD CONSTRAINT "UserSpeakingRoom_speakingRoomId_f
 
 -- AddForeignKey
 ALTER TABLE "SpeakingRoom" ADD CONSTRAINT "SpeakingRoom_hostId_fkey" FOREIGN KEY ("hostId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Expense" ADD CONSTRAINT "Expense_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

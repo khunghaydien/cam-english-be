@@ -37,6 +37,17 @@ type Expense {
   updatedAt: DateTime
 }
 
+type Expenses {
+  data: [Expense!]!
+}
+
+input FilterExpenseDto {
+  amount: String
+  description: String
+  fromDate: String
+  toDate: String
+}
+
 input FilterSpeakingClubDto {
   language: [String!]
   level: [String!]
@@ -80,6 +91,7 @@ input PaginationDto {
 }
 
 type Query {
+  getExpense(filterExpenseDto: FilterExpenseDto): Expenses
   getSpeakingClub(filterSpeakingClubDto: FilterSpeakingClubDto, orderByDto: OrderByDto, paginationDto: PaginationDto): SpeakingClub
   getSpeakingRoom(getSpeakingRoomDto: GetSpeakingRoomDto): SpeakingRoom
   hello: String!

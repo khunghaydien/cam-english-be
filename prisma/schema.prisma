@@ -102,7 +102,7 @@ model Expense {
   id          String   @id @default(uuid())
   date        String
   description String
-  amount      String
+  amount      Int
   authorId    String
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now()) @map("created_at")

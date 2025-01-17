@@ -6,13 +6,13 @@ export class Expense {
   id: string;
 
   @Field({ nullable: true })
-  date?: string;
+  date?: number;
 
   @Field({ nullable: true })
   description?: string;
 
   @Field({ nullable: true })
-  amount?: string;
+  amount?: number;
 
   @Field(() => String, { nullable: true })
   authorId?: string;

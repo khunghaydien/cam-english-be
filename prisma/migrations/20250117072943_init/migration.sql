@@ -52,7 +52,7 @@ CREATE TABLE "Expense" (
     "id" TEXT NOT NULL,
     "date" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "amount" TEXT NOT NULL,
+    "amount" INTEGER NOT NULL,
     "authorId" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,

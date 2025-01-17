@@ -15,7 +15,7 @@ export class ExpenseService {
     try {
       const expense = await this.prismaService.expense.create({
         data: {
-          date,
+          date: date.toString(),
           description,
           amount,
           authorId: user.id,
@@ -24,7 +24,10 @@ export class ExpenseService {
           author: true,
         },
       });
-      return expense;
+      return {
+        ...expense,
+        date: parseInt(expense.date),
+      };
     } catch (error) {
       throw new BadRequestException({
         Expense: 'An error occurred while creating Expense.',
@@ -60,7 +63,12 @@ export class ExpenseService {
         },
       });
       return {
-        data: expenses,
+        data: expenses.map((expense) => {
+          return {
+            ...expense,
+            date: parseInt(expense.date),
+          };
+        }),
       };
     } catch (error) {
       throw new BadRequestException({ error });

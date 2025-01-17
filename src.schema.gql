@@ -9,8 +9,8 @@ input AuthorizationSignInDto {
 }
 
 input CreateExpenseDto {
-  amount: String
-  date: String
+  amount: Float
+  date: Float
   description: String
 }
 
@@ -27,11 +27,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Expense {
-  amount: String
+  amount: Float
   author: User
   authorId: String
   createdAt: DateTime
-  date: String
+  date: Float
   description: String
   id: String!
   updatedAt: DateTime
@@ -42,10 +42,10 @@ type Expenses {
 }
 
 input FilterExpenseDto {
-  amount: String
+  amount: Float
   description: String
-  fromDate: String
-  toDate: String
+  fromDate: Float
+  toDate: Float
 }
 
 input FilterSpeakingClubDto {
